@@ -19,8 +19,8 @@ provider "helm" {
     host                   = module.ekscluster.endpoint
     cluster_ca_certificate = base64decode(module.ekscluster.kubeconfig-certificate-authority-data)
     exec {
-      api_version = "client.authentication.k8s.io/v1alpha1"
-      args        = ["eks", "get-token", "--cluster-name", var.cluster_name]
+      api_version = "client.authentication.k8s.io/v1beta1"
+      args        = ["eks", "get-token", "--cluster-name", lookup(var.cluster_name, terraform.workspace)]
       command     = "aws"
     }
   }

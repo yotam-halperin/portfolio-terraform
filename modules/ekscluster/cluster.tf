@@ -117,7 +117,7 @@ resource "helm_release" "argocd" {
   create_namespace = true
 
   values = [
-    file("argocd/application.yaml")
+    file("modules/ekscluster/argocd/application.yaml")
   ]
 }
 

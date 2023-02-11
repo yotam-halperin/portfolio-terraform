@@ -4,11 +4,9 @@ server:
       namespace: argocd
       project: default
       source:
-        repoURL: https://github.com/piomin/sample-terraform-kubernetes-argocd.git
+        repoURL: https://github.com/yotam-halperin/portfolio-charts.git
         targetRevision: HEAD
-        path: argocd/manifests/cluster
-        directory:
-          recurse: true
+        path: .
       destination:
         server: https://kubernetes.default.svc
       syncPolicy:
