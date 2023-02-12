@@ -4,9 +4,15 @@ server:
       namespace: argocd
       project: default
       source:
-        repoURL: https://github.com/yotam-halperin/portfolio-charts.git
+        repoURL: git@github.com:yotam-halperin/portfolio-charts.git
         targetRevision: HEAD
-        path: .
+        path: argocd
+        # helm:
+        #   values: |
+        #     serviceMonitor:
+        #       enabled: true # has to be false if you do not have Prometheus already installed
+        #     trivy:
+        #       ignoreUnfixed: true
       destination:
         server: https://kubernetes.default.svc
       syncPolicy:

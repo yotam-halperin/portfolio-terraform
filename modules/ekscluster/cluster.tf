@@ -120,22 +120,74 @@ resource "helm_release" "argocd" {
     file("modules/ekscluster/argocd/application.yaml")
   ]
 }
+data "aws_ssm_parameter" "ssh_private_key" {
+  name = "private_key_yh"
+}
+resource "kubernetes_secret" "ssh_key" {
+  depends_on = [helm_release.argocd]
+  
+  metadata {
+    name      = "private-repo"
+    namespace = "argocd" 
+    labels = {
+      "argocd.argoproj.io/secret-type" = "repository"
+    }
+  }
 
+  type = "Opaque"
 
-# resource "helm_release" "argocd" {
-#   name       = "argocd-helm"
-#   namespace  = kubernetes_namespace.namespaces[1].metadata.0.name
+  data = {
+    "sshPrivateKey" = data.aws_ssm_parameter.ssh_private_key.value
+    "type"          = "git"
+    "url"           = "git@github.com:yotam-halperin/portfolio-charts.git"
+    "name"          = "github"
+    "project"       = "*"
+  }
+}
+####
+data "aws_iam_policy_document" "csi" {
+  statement {
+    actions = ["sts:AssumeRoleWithWebIdentity"]
+    effect  = "Allow"
 
-#   repository = "https://argoproj.github.io/argo-helm"
-#   chart      = "argo-cd"
+    condition {
+      test     = "StringEquals"
+      variable = "${replace(aws_iam_openid_connect_provider.eks.url, "https://", "")}:sub"
+      values   = ["system:serviceaccount:kube-system:ebs-csi-controller-sa"]
+    }
 
-#   set {
-#     name  = "service.type"
-#     value = "LoadBalancer"
-#   }
-#   set {
-#     name  = "service.annotations.service\\.beta\\.kubernetes\\.io/do-loadbalancer-name"
-#     # value = format("%s-nginx-ingress", var.cluster_name)
-#     value = format("%s-nginx-ingress", "yh-cluster")
-#   }
-# }
+    principals {
+      identifiers = [aws_iam_openid_connect_provider.eks.arn]
+      type        = "Federated"
+    }
+  }
+}
+
+resource "aws_iam_role" "eks_ebs_csi_driver" {
+  assume_role_policy = data.aws_iam_policy_document.csi.json
+  name               = "yh_eks-ebs-csi-driver"
+}
+
+resource "aws_iam_role_policy_attachment" "amazon_ebs_csi_driver" {
+  role       = aws_iam_role.eks_ebs_csi_driver.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy"
+}
+
+#
+data "tls_certificate" "eks" {
+  url = aws_eks_cluster.cluster.identity[0].oidc[0].issuer
+}
+
+resource "aws_iam_openid_connect_provider" "eks" {
+  client_id_list  = ["sts.amazonaws.com"]
+  thumbprint_list = [data.tls_certificate.eks.certificates[0].sha1_fingerprint]
+  url             = aws_eks_cluster.cluster.identity[0].oidc[0].issuer
+}
+
+#
+resource "aws_eks_addon" "csi_driver" {
+  cluster_name             = aws_eks_cluster.cluster.name
+  addon_name               = "aws-ebs-csi-driver"
+  addon_version            = "v1.11.4-eksbuild.1"
+  service_account_role_arn = aws_iam_role.eks_ebs_csi_driver.arn
+}

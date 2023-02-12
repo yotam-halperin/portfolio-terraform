@@ -10,9 +10,17 @@ provider "aws" {
   }
 }
 
+
 provider "kubernetes" {
-  config_path = "~/.kube/config"
+  host                   = module.ekscluster.endpoint
+  cluster_ca_certificate = base64decode(module.ekscluster.kubeconfig-certificate-authority-data)
+  exec {
+    api_version = "client.authentication.k8s.io/v1beta1"
+    args        = ["eks", "get-token", "--cluster-name", lookup(var.cluster_name, terraform.workspace)]
+    command     = "aws"
+  }
 }
+
 
 provider "helm" {
   kubernetes {
@@ -22,6 +30,19 @@ provider "helm" {
       api_version = "client.authentication.k8s.io/v1beta1"
       args        = ["eks", "get-token", "--cluster-name", lookup(var.cluster_name, terraform.workspace)]
       command     = "aws"
+    }
+  }
+}
+
+terraform {
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 4.39"
+    }
+    tls = {
+      source  = "hashicorp/tls"
+      version = "~> 4.0"
     }
   }
 }
