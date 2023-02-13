@@ -46,14 +46,21 @@ resource "aws_iam_role_policy_attachment" "AmazonEKSVPCResourceController" {
   role       = aws_iam_role.cluster_role.name
 }
 
+### Provides read/write access to AWS Secrets Manager via the AWS Management Console.
+resource "aws_iam_role_policy_attachment" "SecretsManagerReadWrite" {
+  policy_arn = "arn:aws:iam::aws:policy/SecretsManagerReadWrite"
+  role       = aws_iam_role.cluster_role.name
+}
+
 resource "aws_eks_node_group" "yh-node" {
   cluster_name    = aws_eks_cluster.cluster.name
   node_group_name = "yh-node"
   node_role_arn   = aws_iam_role.node-role.arn
   subnet_ids      = var.subnet_ids
+  instance_types = ["t3.2xlarge"]
 
   scaling_config {
-    desired_size = 2
+    desired_size = 3
     max_size     = 3
     min_size     = 1
   }
@@ -105,6 +112,11 @@ resource "aws_iam_role_policy_attachment" "AmazonEC2ContainerRegistryReadOnly" {
   role       = aws_iam_role.node-role.name
 }
 
+### Provides read/write access to AWS Secrets Manager via the AWS Management Console.
+resource "aws_iam_role_policy_attachment" "SecretsManagerReadWritenode" {
+  policy_arn = "arn:aws:iam::aws:policy/SecretsManagerReadWrite"
+  role       = aws_iam_role.node-role.name
+}
 
 # Install ArgoCD Helm Chart
 resource "helm_release" "argocd" {
