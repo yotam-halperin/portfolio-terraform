@@ -74,5 +74,92 @@ variable "cluster_name" {
     "default" = "yh-cluster"
     "PROD" = "yh-production"
   }
-  description = "Name of the Kubernetes cluster"
+}
+
+variable "node_group_name" {
+  type = map
+  default     = {
+    "default" = "yh-node",
+    "PROD" = "yh-node-prod"
+  }
+}
+
+variable "instance_type" {
+  type = list(string)
+  default = ["t3.2xlarge"]
+}
+
+variable "group_max_size" {
+  type = map
+  default = {
+    "default" = 3
+    "PROD" = 3
+  }
+}
+
+variable "group_min_size" {
+  type = map
+  default = {
+    "default" = 1
+    "PROD" = 1
+  }
+}
+
+variable "group_desired_size" {
+  type = map
+  default = {
+    "default" = 3
+    "PROD" = 3
+  }
+}
+
+
+variable "argocd_repo" {
+  type = string
+  default = "https://argoproj.github.io/argo-helm"
+}
+
+variable "argocd_chart" {
+  type = string
+  default = "argo-cd"
+}
+
+variable "argocd_namespace" {
+  type = string
+  default = "argocd"
+}
+
+variable "argocd_create_namespace" {
+  type = bool
+  default = true
+}
+
+variable "argocd_version" {
+  type = string
+  default = "4.9.7"
+}
+
+variable "argocd_application_path" {
+  type = string
+  default = "modules/ekscluster/argocd/application.yaml"
+}
+
+variable "ssh_parameter_name" {
+  type = string
+  default = "private_key_yh"
+}
+
+variable "argocd_repo_type" {
+  type = string
+  default = "git"
+}
+
+variable "argocd_repo_url" {
+  type = string
+  default = "git@github.com:yotam-halperin/portfolio-charts.git"
+}
+
+variable "argocd_repo_place" {
+  type = string
+  default = "github"
 }
