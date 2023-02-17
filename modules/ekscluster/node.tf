@@ -36,7 +36,7 @@ resource "aws_iam_role" "yh-tls-node-role" {
     {
       "Effect": "Allow",
       "Principal": {
-        "AWS": "arn:aws:iam::644435390668:role/yh-eks-node-group"
+        "AWS": "arn:aws:iam::644435390668:role/${var.node_group_name}-node-role"
       },
       "Action": "sts:AssumeRole"
     }

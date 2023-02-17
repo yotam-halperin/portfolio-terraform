@@ -81,3 +81,5 @@ variable "argocd_repo_place" {
   type = string
   default = "github"
 }
+
+### delete defaults !!!

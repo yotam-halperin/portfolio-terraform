@@ -47,25 +47,6 @@ variable "subnet_azs" {
   }
 }
 
-### helm variables
-
-variable "instance_ami" {
-  type        = map
-  default     = {
-    "default" = "ami-01b8d743224353ffe",
-    "PROD" = "ami-01b8d743224353ffe"
-  }
-}
-
-variable "instance_type" {
-  type        = map
-  default     = {
-    "default" = "t3a.small",
-    "PROD" = "t3a.small"
-  }
-}
-
-
 ### ekscluster variables
 
 variable "cluster_name" {
@@ -76,6 +57,7 @@ variable "cluster_name" {
   }
 }
 
+# node vars
 variable "node_group_name" {
   type = map
   default     = {
@@ -113,6 +95,7 @@ variable "group_desired_size" {
   }
 }
 
+# helm argocd vars
 
 variable "argocd_repo" {
   type = string
