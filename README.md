@@ -17,13 +17,14 @@ to create the infrastructure you first need to authenticate with AWS with the fo
 
 - enter your AWS access key && secret access key
 
-now let's apply the enviroment to the cloud with-
+now let's apply the enviroment:
 * to run with default values:
 <terraform apply --auto-approve>
 
 * you can also change the the default variables that placed in myvars.tfvars and run this command-
 <terraform apply -var-file="myvars.tfvars">
+- note that you can't use this option with the current variables.tf file because the file designed to work 
+- with different workspaces so some values are presented as map type and can't be overide with strings. 
 
-
-When installed you can get cluster info by running the init.sh script with:
+After all changes applied, you can get cluster info, and final setup by runnung init.sh script with:
 <bash init.sh>
