@@ -1,3 +1,5 @@
+# SEE NOTE ABOUT myvars.tfvars FILE IN THE README.md FILE
+
 ### network variables
 region = "eu-west-2"
 vpc_name = "yh-vpc"
