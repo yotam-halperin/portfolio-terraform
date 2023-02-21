@@ -2,8 +2,7 @@
 ### CrossyRoad Application Pricing ###
 
 - node group EC2 instances:
-<!-- t3.2xlarge - $0.3776832 hourly -->
-t3a.2xlarge - $0.3398832 hourly
+t3.2xlarge - $0.3776832 hourly
 
 - node group EBS volumes:
 $0.10 per GB-month of provisioned storage

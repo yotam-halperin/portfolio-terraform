@@ -23,8 +23,7 @@ now let's apply the enviroment:
 
 * you can also change the the default variables that placed in myvars.tfvars and run this command-
 <terraform apply -var-file="myvars.tfvars">
-- note that you can't use this option with the current variables.tf file because the file designed to work 
-- with different workspaces so some values are presented as map type and can't be overide with strings. 
+
 
 After all changes applied, you can get cluster info, and final setup by runnung init.sh script with:
 <bash init.sh>

@@ -74,8 +74,8 @@ variable "instance_type" {
 variable "group_max_size" {
   type = map
   default = {
-    "default" = 3
-    "PROD" = 3
+    "default" = 4
+    "PROD" = 4
   }
 }
 
